@@ -248,7 +248,7 @@ function submitQuiz(userDetails, answers) {
     console.error('Error saving quiz:', error);
     return {
       success: false,
-      error: 'שגיאה בשמירת המבחן'
+      error: 'שגיאה בשמירת השעשועון'
     };
   }
 }
