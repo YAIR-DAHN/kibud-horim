@@ -1,4 +1,4 @@
-// דף הרשמה — סניפים מ-cache המשותף (כמו בשעשועון), שמירת userDetails ל-localStorage לשימוש בחידון
+// דף הרשמה - סניפים מ-cache המשותף (כמו בשעשועון), שמירת userDetails ל-localStorage לשימוש בחידון
 
 function getWhatsappUpdatesUrl() {
     if (typeof SITE !== 'undefined' && SITE.links && SITE.links.whatsappUpdates) {
@@ -7,7 +7,7 @@ function getWhatsappUpdatesUrl() {
     return 'https://chat.whatsapp.com/FT2N0k77sA25HrTvTR4PEb?mode=gi_t';
 }
 
-/** אותו מפתח ומבנה כמו ב-quiz.js — השעשועון קורא userName, branch, phone */
+/** אותו מפתח ומבנה כמו ב-quiz.js - השעשועון קורא userName, branch, phone */
 function persistUserDetailsForQuiz(userDetails) {
     try {
         const payload = {
@@ -244,7 +244,7 @@ function validateBranch(input) {
 }
 
 /**
- * התנהגות זהה ל-quiz.js — חיפוש, תצוגת dropdown, סגירה בלחיצה מחוץ לאזור
+ * התנהגות זהה ל-quiz.js - חיפוש, תצוגת dropdown, סגירה בלחיצה מחוץ לאזור
  */
 function updateBranchList(branches) {
     const input = document.getElementById('branch');
@@ -391,7 +391,7 @@ function showSuccessPage() {
         '        <li>עדכונים על שעשועון שבועי וזמני פתיחה</li>' +
         '        <li>פרסום זוכים</li>' +
         '        <li>הגרלות מיוחדות לחברי הקבוצה</li>' +
-        '        <li>עדכונים כלליים — בלי ספאם</li>' +
+        '        <li>עדכונים כלליים - בלי ספאם</li>' +
         '      </ul>' +
         '    </div>' +
         '    <div class="register-success-actions">' +

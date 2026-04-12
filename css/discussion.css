@@ -642,7 +642,7 @@ body {
     pointer-events: none;
 }
 
-/* Submit — טופס תגובה ראשי */
+/* Submit - טופס תגובה ראשי */
 .comment-form .submit-btn {
     background: linear-gradient(135deg, var(--site-blue, #0056b3) 0%, var(--site-blue-dark, #003d82) 100%);
     color: white;
