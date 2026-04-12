@@ -401,9 +401,6 @@ function showSuccessPage() {
         '        <span class="material-icons" aria-hidden="true">chat</span>' +
         '        הצטרפות לוואטסאפ' +
         '      </a>' +
-        '      <button type="button" class="btn-ghost" onclick="window.location.href=\'quiz.html\'">' +
-        '        מעבר לשעשועון' +
-        '      </button>' +
         '      <button type="button" class="btn-ghost" onclick="window.location.href=\'index.html\'">' +
         '        חזרה לדף הבית' +
         '      </button>' +
