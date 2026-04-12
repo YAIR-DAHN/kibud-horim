@@ -1,0 +1,22 @@
+/**
+ * משתני עיצוב גלובליים — מחזור חדש מחליף ערכים כאן (או קובץ ערכת צבע נפרד).
+ */
+:root {
+    --site-blue: #0056b3;
+    --site-blue-dark: #003d82;
+    --site-blue-soft: #e8f1fb;
+    --site-yellow: #ffe566;
+    --site-yellow-strong: #ffd400;
+    --site-red: #e32222;
+    --site-white: #ffffff;
+    --site-ink: #0f2847;
+    --site-muted: #5a6f85;
+    --site-card: #ffffff;
+    --site-radius-lg: 1.25rem;
+    --site-radius-xl: 1.75rem;
+    --site-shadow: 0 14px 40px rgba(0, 56, 120, 0.12);
+    --site-shadow-hover: 0 20px 48px rgba(0, 56, 120, 0.18);
+    --site-font-display: 'Rubik', 'Heebo', system-ui, sans-serif;
+    --site-font-body: 'Heebo', system-ui, sans-serif;
+    --site-max: 1120px;
+}

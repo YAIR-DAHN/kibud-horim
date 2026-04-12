@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="תנועת הנוער אור ישראלי — תוכנית חווייתית בנושא כיבוד הורים, פעילות קבוצתית ושעשועון שבועי.">
+    <meta property="og:title" content="אור ישראלי · כיבוד הורים">
+    <meta property="og:description" content="תוכנית חווייתית לנוער — שיח, שעשועון שבועי והגרלות.">
+    <meta property="og:image" content="./assets/logos/or-israeli-logo.png">
+    <meta name="theme-color" content="#0056b3" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0056b3" media="(prefers-color-scheme: dark)">
+    <meta name="msapplication-navbutton-color" content="#0056b3">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0056b3">
+
+    <link rel="icon" type="image/png" href="./assets/logos/or-israeli-logo.png">
+    <link rel="apple-touch-icon" href="./assets/logos/or-israeli-logo.png">
+
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
+
+    <title>אור ישראלי · כיבוד הורים</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/program-skin.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/carousel.css">
+    <script src="js/config.js"></script>
+    <script src="js/site-config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/updates.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/viewer.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/main.js"></script>
+</head>
+
+<body>
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>טוען...</p>
+    </div>
+
+    <header class="modern-header">
+        <div class="header-content-home-page">
+            <div class="logo-container">
+                <div class="main-logo">
+                    <img src="assets/logos/or-israeli-logo.png" alt="אור ישראלי">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="modern-main">
+        <section class="hero-section hero-program animate-on-scroll">
+            <div class="hero-program__shell">
+                <div class="hero-program__ribbon">פרטים אצל רכז הסניף</div>
+                <div class="hero-program__bg" aria-hidden="true"></div>
+                <div class="hero-program__inner">
+                    <div class="hero-program__visual">
+                        <img src="assets/images/kibud-horim-hero.png" alt="כיבוד אב ואם — אור ישראלי" width="600" height="800" loading="eager">
+                    </div>
+                    <div class="hero-program__copy">
+                        <p class="hero-program__eyebrow">תוכנית חווייתית · אור ישראלי</p>
+                        <h1 class="hero-program__title">כיבוד אב ואם</h1>
+                        <p class="hero-program__cycle">התוכנית החינוכית מחזור ו׳</p>
+                        <p class="hero-program__lead">מחוות קטנות, שיח פתוח והרבה אנרגיה חיובית בבית — עם שעשועון שבועי, הגרלות ופעילות קבוצתית בסניף.</p>
+                        <div class="hero-program__chips">
+                            <a href="discussion-topics.html" class="hero-chip">שיח קבוצתי</a>
+                            <a href="#" class="hero-chip hero-chip--ghost" onclick="handleQuizNavigation(event); return false;">שעשועון והגרלות</a>
+                            <a href="register.html" class="hero-chip hero-chip--ghost" id="register-chip">הרשמה לפעילות</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="modern-nav">
+            <a href="#" class="nav-card" onclick="handleQuizNavigation(event)">
+                <div class="nav-icon">🧩</div>
+                <h3>שעשועון שבועי</h3>
+                <p>שאלות קצרות והגרלות</p>
+            </a>
+            <a href="discussion-topics.html" class="nav-card">
+                <div class="nav-icon">💬</div>
+                <h3>נושא לשיח</h3>
+                <p>שיתוף והקשבה בקבוצה</p>
+            </a>
+            <a href="register.html" class="nav-card">
+                <div class="nav-icon">📝</div>
+                <h3>הרשמה לפעילות</h3>
+                <p>מילוי חד־פעמי לפני השבוע</p>
+            </a>
+            <a href="https://chat.whatsapp.com/FT2N0k77sA25HrTvTR4PEb?mode=gi_t" class="nav-card" target="_blank" rel="noopener noreferrer">
+                <div class="nav-icon">👥</div>
+                <h3>קבוצת העדכונים</h3>
+                <p>וואטסאפ שקט — עדכונים והגרלות</p>
+            </a>
+            <a href="winners.html" class="nav-card">
+                <div class="nav-icon">🏆</div>
+                <h3>זוכי השעשועון</h3>
+                <p>מחמאות לשותפים</p>
+            </a>
+            <!-- <a href="mase-tov.html" class="nav-card">
+                <div class="nav-icon">❤️</div>
+                <h3>מעשה טוב</h3>
+                <p>ספרו מה עשיתם</p>
+            </a> -->
+            <a href="#downloads-section" class="nav-card">
+                <div class="nav-icon">📥</div>
+                <h3>חומרי הפעילות</h3>
+                <p>צפייה והורדה</p>
+            </a>
+        </nav>
+
+        <!-- <section id="announcements-section" class="announcements-section animate-on-scroll">
+            <h2 class="section-title">
+                <span class="title-icon">📢</span>
+                לוח מודעות
+            </h2>
+            <div class="carousel-container">
+                <div class="carousel-wrapper">
+                    <div class="carousel-slides">
+                        <div class="carousel-slide">
+                            <div class="announcement-card">
+                                <img src="assets/ads/add1.jpg" alt="מודעה" class="announcement-image">
+                                <div class="announcement-overlay">
+                                    <span class="material-icons">fullscreen</span>
+                                    <span>לחץ להגדלה</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-dots"></div>
+            </div>
+        </section> -->
+
+        <section class="updates-section animate-on-scroll">
+            <h2 class="section-title">
+                <span class="title-icon">📢</span>
+                עדכונים אחרונים
+            </h2>
+            <div id="updates-container" class="updates-container">
+                <div class="loading-updates">
+                    <div class="spinner"></div>
+                    <p>טוען עדכונים...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="downloads-section animate-on-scroll" id="downloads-section">
+            <h2 class="section-title">
+                <span class="title-icon">📥</span>
+                חומרים להורדה
+            </h2>
+            <div class="book-viewer-container">
+                <h3 class="viewer-title">
+                    <span class="title-icon">📖</span>
+                    דפדוף במגזין הפעילות
+                </h3>
+                <div class="book-viewer">
+                    <iframe id="bookFrame" src="turn.js/hoveret/hoveret.html" frameborder="0" allowfullscreen
+                        title="מגזין פעילות — כיבוד הורים">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="downloads-container">
+                <a href="assets/docs/hovert_ben_meitzarim.pdf" class="download-card" download>
+                    <div class="download-icon">
+                        <span class="material-icons">menu_book</span>
+                    </div>
+                    <div class="download-info">
+                        <h3>הורדת מגזין הפעילות</h3>
+                        <p>עדכנו כאן את שם הקובץ כשתעלו PDF חדש לסניף</p>
+                    </div>
+                    <span class="material-icons download-arrow">download</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="support-section animate-on-scroll">
+            <p class="support-text">לשאלות בנושא המיזם:</p>
+            <div class="support-contacts">
+                <a href="https://wa.me/972583730000" class="support-contact" target="_blank" rel="noopener noreferrer">
+                    <span class="contact-icon">💬</span>
+                    <span dir="ltr">058-373-0000</span>
+                </a>
+                <a href="tel:0548473336" class="support-contact">
+                    <span class="contact-icon">📞</span>
+                    <span dir="ltr">054-847-3336</span>
+                </a>
+            </div>
+            <p class="support-fineprint">הפעילות מתקיימת במסגרת חינוך בלתי־פורמלי; לפרטים נוספים פנו לרכז הסניף.</p>
+        </section>
+
+        <section class="share-section animate-on-scroll">
+            <p class="share-text">אתם בתוכנית? שיתוף קטן יביא עוד חברים לחוויה.</p>
+            <button type="button" class="share-button ripple" onclick="shareWebsite()">
+                <span class="share-icon">📤</span>
+                <span>שיתוף לחברים</span>
+            </button>
+        </section>
+    </main>
+
+    <footer class="modern-footer">
+        <p class="footer-credit" onclick="showContactInfo()">נבנה ע"י Y.D. Systems</p>
+    </footer>
+
+    <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.getElementById('carouselVideo')) {
+                const player = videojs('carouselVideo');
+                const overlay = document.querySelector('.video-card .ad-overlay');
+
+                if (overlay) {
+                    overlay.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        player.play();
+                        overlay.style.opacity = '0';
+                        overlay.style.visibility = 'hidden';
+                    });
+
+                    player.on('ended', function () {
+                        overlay.style.opacity = '1';
+                        overlay.style.visibility = 'visible';
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
