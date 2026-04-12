@@ -403,3 +403,69 @@ body {
         margin-top: -12px;
     }
 }
+
+/* דפים פנימיים: הדר צפוף במובייל; ביטול עמודה מ-discussion.css; ללא כותרת "תנועת הנוער…" */
+@media (max-width: 768px) {
+    .modern-header:has(> .header-content) {
+        padding-top: 0.45rem !important;
+        padding-bottom: 0.45rem !important;
+        min-height: unset !important;
+    }
+
+    .modern-header > .header-content {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        text-align: start !important;
+        gap: 0.5rem;
+        padding-inline: 0.65rem !important;
+        padding-block: 0.35rem !important;
+    }
+
+    .modern-header > .header-content .logo-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .modern-header > .header-content .logo-text h2 {
+        display: none !important;
+    }
+
+    .modern-header > .header-content .logo-text {
+        min-width: 0;
+        margin: 0;
+    }
+
+    .modern-header > .header-content .logo-text p {
+        margin: 0;
+        font-size: 0.8rem;
+        line-height: 1.25;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .modern-header > .header-content .main-logo img {
+        height: 40px;
+        width: auto;
+    }
+
+    .modern-header > .header-content .back-button {
+        flex-shrink: 0;
+        padding: 0.4rem 0.55rem !important;
+        font-size: 0.72rem !important;
+        border-radius: 10px;
+        gap: 0.2rem;
+        line-height: 1.15;
+        white-space: nowrap;
+    }
+
+    .modern-header > .header-content .back-button .material-icons {
+        font-size: 1.1rem;
+    }
+}

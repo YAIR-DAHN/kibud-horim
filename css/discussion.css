@@ -823,8 +823,12 @@ body {
     }
     
     .header-content {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        text-align: start;
+        gap: 0.5rem;
     }
     
     .discussion-title {
