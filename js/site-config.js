@@ -24,7 +24,7 @@ window.SITE = {
 
     /** נתיבים - עדכן כשמחליפים קבצי PDF / מצגת */
     assets: {
-        bookletPdf: 'assets/docs/hovert_ben_meitzarim.pdf',
+        bookletPdf: 'assets/docs/hoveret_kibud_horim.pdf',
         bookletViewerTitle: 'חומרי הפעילות - דפדוף',
         heroImage: 'assets/images/kibud-horim-hero.png'
     },
