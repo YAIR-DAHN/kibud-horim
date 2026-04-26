@@ -7,33 +7,36 @@ const PODCAST_CONFIG = {
     resumeBuffer: 5, // שניות לחזור אחורה בהמשך האזנה
 };
 
-// רשימת הפרקים - כאן תוסיף פרקים חדשים
+// רשימת הפרקים - הוסיפו כאן פריט לכל קובץ MP3 תחת assets/podcast/ (השתמשו בשם קובץ תואם בדיוק)
 const EPISODES = [
     {
         id: 'episode1',
         number: 1,
-        title: 'פרק א - דף לג: עד לד.',
-        description: 'הפרק עוסק מתחילת הפרק עד שני הלישנות ברבא',
-        audioFile: 'assets/podcast/מאזינים למפקיד פרק א.mp3',
-        duration: "07:18" // אורך הפרק
+        title: 'פרק 1 – חומר הלכתי (עמ׳ 7–9)',
+        description: 'חזרה ושינון על החומר ההלכתי בחוברת, עמודים 7–9',
+        audioFile: 'assets/podcast/פרק 1 - חומר הלכתי עמודים 7-9.mp3',
+        duration: '—' // יתעדכן אוטומטית אחרי טעינת המטא-דאטה
     },
     {
         id: 'episode2',
         number: 2,
-        title: 'פרק ב - המשך דף לד.',
-        description: 'הפרק עוסק בסוגיה של "לא שילם שילם ממש" עד סוף העמוד',
-        audioFile: 'assets/podcast/מאזינים למפקיד פרק ב.mp3',
-        duration: "06:44"
-    },
-    {
-        id: 'episode10',
-        number: 3,
-        title: 'ספיישל חזרה - חומר עיון הלכתי',
-        description: 'פרק חזרה המיועד לעולים לגמר, הפרק עוסק בחזרה על חומר העיון ההלכתי',
-        audioFile: 'assets/podcast/ספיישל חזרה עיון הלכתי לעולים לגמר.mp3',
-        duration: "05:38"
+        title: 'פרק 2 – גמרא קידושין (עמ׳ ל: - לא.)',
+        description: 'חזרה ושינון על הגמרא בעמודים ל: - לא.',
+        audioFile: 'assets/podcast/פרק 2 - גמרא קידושין ל - לא.wav',
+        duration: '—' // יתעדכן אוטומטית אחרי טעינת המטא-דאטה
     }
+    // כשמעלים קבצי MP3 נוספים, הוסיפו אובייקטים נוספים לכאן (עם שדה number עוקב)
 ];
+
+/** מקודד כל מקטע בנתיב URL כדי ששמות קבצים בעברית/רווחים ייטענו בכל דפדפן/שרת */
+function encodeMediaPath(relativePath) {
+    if (!relativePath) return relativePath;
+    return relativePath
+        .replace(/\\/g, '/')
+        .split('/')
+        .map((part) => encodeURIComponent(part))
+        .join('/');
+}
 
 // משתנים גלובליים
 let currentEpisode = null;
@@ -87,9 +90,9 @@ function initPodcastPlayer() {
 }
 
 function loadEpisodes() {
-    const episodesList = document.getElementById('episodesList');
+    const episodesList = document.getElementById('episodesList') || document.getElementById('episodesGrid');
     if (!episodesList) {
-        console.error('Episodes list element not found!');
+        console.error('Episodes list element not found (expected #episodesList or #episodesGrid)!');
         return;
     }
     
@@ -144,9 +147,10 @@ function selectEpisode(episode) {
     document.getElementById('episodeTitle').textContent = episode.title;
     document.getElementById('episodeDescription').textContent = episode.description;
     
-    // טעינת האודיו
-    console.log('Loading audio:', episode.audioFile);
-    audioPlayer.src = episode.audioFile;
+    // טעינת האודיו (מסלול מקודד לתאימות Unicode)
+    const src = encodeMediaPath(episode.audioFile);
+    console.log('Loading audio:', src);
+    audioPlayer.src = src;
     
     // מחכים שהאודיו יטען ואז מתחילים לנגן אוטומטית
     audioPlayer.addEventListener('loadeddata', () => {
@@ -205,7 +209,14 @@ function playPause() {
     if (isPlaying) {
         audioPlayer.pause();
     } else {
-        audioPlayer.play();
+        const p = audioPlayer.play();
+        if (p !== undefined) {
+            p.catch((err) => {
+                console.warn('לא ניתן להפעיל אוטומטית (מדיניות הדפדפן). לחצו שוב לנגן.', err);
+                isPlaying = false;
+                updatePlayButton();
+            });
+        }
     }
 }
 
@@ -387,10 +398,17 @@ function loadPlaybackData() {
 }
 
 function setupEventListeners() {
+    const playBtn = document.getElementById('playPauseBtn');
+    const backBtn = document.getElementById('skipBackward');
+    const fwdBtn = document.getElementById('skipForward');
+    if (!playBtn || !backBtn || !fwdBtn) {
+        console.error('רכיבי בקרה חסרים – ודאו שתגית הנגן קיימת ב-podcast.html');
+        return;
+    }
     // כפתורי בקרה
-    document.getElementById('playPauseBtn').addEventListener('click', playPause);
-    document.getElementById('skipBackward').addEventListener('click', () => skip(-PODCAST_CONFIG.skipInterval));
-    document.getElementById('skipForward').addEventListener('click', () => skip(PODCAST_CONFIG.skipInterval));
+    playBtn.addEventListener('click', playPause);
+    backBtn.addEventListener('click', () => skip(-PODCAST_CONFIG.skipInterval));
+    fwdBtn.addEventListener('click', () => skip(PODCAST_CONFIG.skipInterval));
     
     // סגירת מודל המשך האזנה בלחיצה על הרקע
     const resumeModal = document.getElementById('resumeModal');
@@ -415,51 +433,64 @@ function setupEventListeners() {
     // בקרת מהירות
     const speedBtn = document.getElementById('speedBtn');
     const speedMenu = document.getElementById('speedMenu');
-    
-    speedBtn.addEventListener('click', () => {
-        speedMenu.classList.toggle('hidden');
-    });
-    
-    speedMenu.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const speed = parseFloat(btn.dataset.speed);
-            audioPlayer.playbackRate = speed;
-            speedBtn.querySelector('span').textContent = `${speed}x`;
-            speedMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            speedMenu.classList.add('hidden');
+    if (speedBtn && speedMenu) {
+        speedBtn.addEventListener('click', () => {
+            speedMenu.classList.toggle('hidden');
+            const open = !speedMenu.classList.contains('hidden');
+            speedBtn.setAttribute('aria-expanded', String(open));
         });
-    });
-    
+
+        const speedLabel = speedBtn.querySelector('.js-speed-label');
+        speedMenu.querySelectorAll('button').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const speed = parseFloat(btn.dataset.speed, 10);
+                if (!isNaN(speed)) {
+                    audioPlayer.playbackRate = speed;
+                }
+                if (speedLabel) {
+                    const map = { 0.75: '0.75×', 1: '1×', 1.25: '1.25×', 1.5: '1.5×', 2: '2×' };
+                    speedLabel.textContent = map[speed] != null ? map[speed] : `${speed}×`;
+                }
+                speedMenu.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                speedMenu.classList.add('hidden');
+                speedBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
     // בקרת עוצמת קול
     const volumeBtn = document.getElementById('volumeBtn');
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeRange = document.getElementById('volumeRange');
-    
-    volumeBtn.addEventListener('click', () => {
-        volumeSlider.classList.toggle('hidden');
-    });
-    
-    volumeRange.addEventListener('input', (e) => {
-        const volume = e.target.value / 100;
-        audioPlayer.volume = volume;
-        updateVolumeIcon(volume);
-        updateVolumeSlider(e.target.value);
-    });
-    
-    // עדכון ראשוני של הסליידר
-    updateVolumeSlider(volumeRange.value || 100);
-    
+    if (volumeBtn && volumeSlider && volumeRange) {
+        volumeBtn.addEventListener('click', () => {
+            volumeSlider.classList.toggle('hidden');
+        });
+        volumeRange.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            audioPlayer.volume = volume;
+            updateVolumeIcon(volume);
+            updateVolumeSlider(e.target.value);
+        });
+        updateVolumeSlider(volumeRange.value || 100);
+    }
+
     // סרגל התקדמות
     const progressBar = document.querySelector('.progress-bar-container');
-    progressBar.addEventListener('click', seekTo);
-    
+    if (progressBar) {
+        progressBar.addEventListener('click', seekTo);
+    }
+
     // סגירת תפריטים בלחיצה מחוץ
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.speed-control')) {
+        if (speedMenu && !e.target.closest('.speed-control')) {
             speedMenu.classList.add('hidden');
+            if (document.getElementById('speedBtn')) {
+                document.getElementById('speedBtn').setAttribute('aria-expanded', 'false');
+            }
         }
-        if (!e.target.closest('#volumeBtn') && !e.target.closest('.volume-slider')) {
+        if (volumeSlider && !e.target.closest('#volumeBtn') && !e.target.closest('.volume-slider')) {
             volumeSlider.classList.add('hidden');
         }
     });
@@ -472,10 +503,10 @@ function skip(seconds) {
 }
 
 function seekTo(e) {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
     let x = e.clientX - rect.left;
-    // אם RTL, נהפוך את הכיוון
-    if (document.dir === 'rtl' || getComputedStyle(document.body).direction === 'rtl') {
+    if (getComputedStyle(el).direction === 'rtl') {
         x = rect.width - x;
     }
     const percentage = x / rect.width;
