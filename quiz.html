@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/program-skin.css">
     <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/quiz-experience.css">
     <meta name="theme-color" content="#0056b3">
     <script src="js/config.js"></script>
     <script src="js/site-config.js"></script>
@@ -49,7 +50,7 @@
                     <h1 class="main-title">שעשועון שבועי</h1>
                     <span class="material-icons shofar-icon">school</span>
                 </div>
-                <p class="hero-question">בוחנים ידע בשבוע - בנושא כיבוד הורים</p>
+                <p class="hero-question">שעשועון שבועי - בנושא כיבוד אב ואם</p>
                 <div class="hero-description">
                     <p class="highlight-text">שאלות קצרות וברורות</p>
                     <p>השעשועון מתעדכן מדי שבוע לפי חומרי הפעילות בסניף.</p>
@@ -113,15 +114,24 @@
              </p>
             </div> -->
 
-            <div class="progress-container">
+            <div class="progress-container quiz-progress-immersive">
+                <button type="button" class="quiz-sound-toggle" id="quizSoundToggle" aria-pressed="false" title="השתקת קול" aria-label="השתקה או הפעלת קול">
+                    <span class="material-icons quiz-sound-ico-on" aria-hidden="true">volume_up</span>
+                    <span class="material-icons quiz-sound-ico-off" aria-hidden="true">volume_off</span>
+                    <span class="quiz-sound-text">קול</span>
+                </button>
                 <div class="progress-bar" id="progressBar"></div>
-                <div class="progress-text">
+                <p class="progress-text progress-text-padded">
                     שאלה <span id="currentQuestion">1</span> מתוך <span id="totalQuestions">10</span>
-                </div>
+                </p>
             </div>
 
-            <div id="question-container">
-                <!-- השאלות יטענו כאן -->
+            <div class="quiz-question-scene" id="quizQuestionScene" aria-live="polite">
+                <div class="time-warp-veil" id="timeWarpVeil" aria-hidden="true"></div>
+                <div class="time-warp-burst" id="timeWarpBurst" aria-hidden="true"></div>
+                <div id="question-container" class="question-surface">
+                    <!-- השאלות יטענו כאן -->
+                </div>
             </div>
 
             <div class="quiz-controls">

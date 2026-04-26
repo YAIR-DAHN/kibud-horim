@@ -4,6 +4,140 @@ let userAnswers = [];
 let currentQuestionIndex = 0;
 let currentUserDetails = null;
 
+const LS_QUIZ_SOUND_MUTED = 'kibudQuizSoundMuted';
+let quizBackgroundAudio = null;
+let questionTransitioning = false;
+
+function getQuizSounds() {
+    const s = (CONFIG.quiz && CONFIG.quiz.sounds) || {};
+    return {
+        good: s.good || 'assets/sound/good.mp3',
+        next: s.next || 'assets/sound/next.mp3',
+        applause: s.applause || 'assets/sound/applause.mp3',
+        background: s.background === undefined ? 'assets/sound/correctAns.mp3' : s.background,
+        backgroundVolume: typeof s.backgroundVolume === 'number' ? s.backgroundVolume : 0.14,
+        sfxVolume: typeof s.sfxVolume === 'number' ? s.sfxVolume : 0.75
+    };
+}
+
+function isQuizAudioMuted() {
+    return localStorage.getItem(LS_QUIZ_SOUND_MUTED) === '1';
+}
+
+function setQuizAudioMuted(muted) {
+    localStorage.setItem(LS_QUIZ_SOUND_MUTED, muted ? '1' : '0');
+    syncQuizSoundToggleUI();
+    if (muted) {
+        stopQuizBackground();
+    } else {
+        tryStartQuizBackground();
+    }
+}
+
+function syncQuizSoundToggleUI() {
+    const btn = document.getElementById('quizSoundToggle');
+    if (!btn) return;
+    const muted = isQuizAudioMuted();
+    btn.classList.toggle('is-muted', muted);
+    btn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    btn.setAttribute('aria-label', muted ? 'הפעלת קול' : 'השתקת קול');
+}
+
+function playQuizSfx(type) {
+    if (isQuizAudioMuted()) return;
+    const s = getQuizSounds();
+    const map = { good: s.good, next: s.next, applause: s.applause };
+    const src = map[type];
+    if (!src) return;
+    const a = new Audio(src);
+    a.volume = s.sfxVolume;
+    a.play().catch(() => {});
+}
+
+function stopQuizBackground() {
+    if (!quizBackgroundAudio) return;
+    try {
+        quizBackgroundAudio.pause();
+        quizBackgroundAudio.removeAttribute('src');
+        quizBackgroundAudio.load();
+    } catch (e) {
+        /* ignore */
+    }
+    quizBackgroundAudio = null;
+}
+
+function tryStartQuizBackground() {
+    if (isQuizAudioMuted()) return;
+    const section = document.getElementById('quiz-section');
+    if (!section || section.classList.contains('hidden') || section.style.display === 'none') return;
+    if (!currentQuestions.length) return;
+
+    const s = getQuizSounds();
+    if (!s.background) return;
+
+    stopQuizBackground();
+    const a = new Audio();
+    a.src = s.background;
+    a.loop = true;
+    a.volume = s.backgroundVolume;
+    quizBackgroundAudio = a;
+    a.play().catch(() => {});
+}
+
+function initQuizSoundToggle() {
+    const btn = document.getElementById('quizSoundToggle');
+    if (!btn) return;
+    syncQuizSoundToggleUI();
+    btn.addEventListener('click', () => setQuizAudioMuted(!isQuizAudioMuted()));
+}
+
+function prefersQuizReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function goToQuestion(newIndex) {
+    if (questionTransitioning) return;
+    if (newIndex < 0 || newIndex >= currentQuestions.length) return;
+    saveCurrentAnswer();
+    if (newIndex === currentQuestionIndex) return;
+
+    const runPaint = () => {
+        paintQuestion(newIndex, { mode: 'instant' });
+    };
+
+    if (prefersQuizReducedMotion()) {
+        currentQuestionIndex = newIndex;
+        runPaint();
+        return;
+    }
+
+    questionTransitioning = true;
+    const surface = document.getElementById('question-container');
+    const veil = document.getElementById('timeWarpVeil');
+    const burst = document.getElementById('timeWarpBurst');
+
+    playQuizSfx('next');
+    if (surface) surface.classList.add('question-surface--exit');
+    if (veil) veil.classList.add('time-warp-veil--on');
+    if (burst) burst.classList.add('time-warp-burst--on');
+
+    setTimeout(() => {
+        currentQuestionIndex = newIndex;
+        runPaint();
+        if (surface) {
+            surface.classList.remove('question-surface--exit');
+            void surface.offsetWidth;
+            surface.classList.add('question-surface--enter');
+        }
+        if (veil) veil.classList.remove('time-warp-veil--on');
+        if (burst) burst.classList.remove('time-warp-burst--on');
+        setTimeout(() => {
+            if (surface) surface.classList.remove('question-surface--enter');
+            questionTransitioning = false;
+        }, 500);
+    }, 420);
+}
+
 async function startQuiz(userDetails) {
     // בדיקה אם השעשועון זמין
     if (!CONFIG.quiz.isAvailable) {
@@ -63,7 +197,8 @@ async function startQuiz(userDetails) {
         quizSection.classList.remove('hidden');
 
         // הצגת השאלה הראשונה
-        showQuestion(0);
+        paintQuestion(0, { mode: 'initial' });
+        tryStartQuizBackground();
 
         // יצירת אינדיקטורים לשאלות
         createQuestionIndicators();
@@ -139,14 +274,18 @@ async function submitQuizToServer() {
         if (result.success) {
             // קודם נסתיר את מסך הטעינה
             hideLoading();
-            
-            // נשנה את תצוגת הדף להודעת הצלחה
+
+            playQuizSfx('applause');
+            stopQuizBackground();
+
+            // נשנה את תצוגת הדף להודעת הצלחה (אחרי רגע קצר לסאונד)
+            setTimeout(() => {
             document.body.innerHTML = `
                 <div class="success-page">
                     <div class="success-container">
                         <span class="material-icons success-icon">check_circle</span>
                         <h1>אשריך!</h1>
-                        <p>התשובות נקלטו בהצלחה!\nהשעשועון הבא יהיה על עמודים 14- 17 בחוברת\n הזוכים יפורסמו באתר במהלך שבוע הבא</p>
+                        <p>התשובות נקלטו בהצלחה! <br>השעשועון הבא יהיה על עמודים 10 - 12 בחוברת וכן המעשיות בגמרא בדף לא: <br> הזוכים יפורסמו באתר במהלך שבוע הבא <br> בהצלחה מרובה!</p>
                         <button onclick="window.location.href='index.html'">חזרה לדף הבית</button>
                     </div>
                 </div>
@@ -205,6 +344,7 @@ async function submitQuizToServer() {
                     }
                 </style>
             `;
+            }, 200);
         } else {
             throw new Error('שגיאה בהגשת השעשועון');
         }
@@ -232,9 +372,7 @@ function createQuestionIndicators() {
             indicator.classList.add('current');
         }
         indicator.addEventListener('click', () => {
-            saveCurrentAnswer();
-            currentQuestionIndex = i;
-            showQuestion(i);
+            goToQuestion(i);
         });
         container.appendChild(indicator);
     }
@@ -465,6 +603,7 @@ function initializeEventListeners() {
             // הוספת מאזיני אירועים לכפתורים
             document.getElementById('cancel-quiz').addEventListener('click', () => {
                 document.getElementById('cancel-dialog').remove();
+                stopQuizBackground();
                 // חזרה לטופס ההרשמה
                 const quizSection = document.getElementById('quiz-section');
                 const registrationForm = document.getElementById('registration-form');
@@ -486,31 +625,43 @@ function initializeEventListeners() {
             return;
         }
 
-        saveCurrentAnswer();
-        currentQuestionIndex--;
-        showQuestion(currentQuestionIndex);
+        goToQuestion(currentQuestionIndex - 1);
     });
     
     document.getElementById('nextQuestion').addEventListener('click', () => {
-        saveCurrentAnswer();
         if (currentQuestionIndex < currentQuestions.length - 1) {
-            currentQuestionIndex++;
-            showQuestion(currentQuestionIndex);
+            goToQuestion(currentQuestionIndex + 1);
         }
     });
     
     document.getElementById('submitQuiz').addEventListener('click', submitQuiz);
+
+    const quizSec = document.getElementById('quiz-section');
+    if (quizSec) {
+        quizSec.addEventListener('change', (e) => {
+            const t = e.target;
+            if (t && t.matches && t.matches('input[type="radio"]') && t.name && t.name.indexOf('q') === 0
+                && t.closest('#question-container')) {
+                playQuizSfx('good');
+            }
+        });
+    }
+
+    initQuizSoundToggle();
 }
 
-function showQuestion(index) {
+function paintQuestion(index, options = {}) {
+    const mode = options.mode || 'instant';
+    currentQuestionIndex = index;
+
     const question = currentQuestions[index];
     const container = document.getElementById('question-container');
-    
+
     // עדכון סרגל התקדמות
     const progressBar = document.querySelector('.progress-bar');
     const progress = ((index + 1) / currentQuestions.length) * 100;
     progressBar.style.width = `${progress}%`;
-    
+
     // עדכון מספרי השאלות
     document.getElementById('currentQuestion').textContent = index + 1;
     document.getElementById('totalQuestions').textContent = currentQuestions.length;
@@ -526,10 +677,10 @@ function showQuestion(index) {
             dot.classList.add('completed');
         }
     });
-    
+
     // עדכון אינדיקטורים
     updateQuestionIndicators();
-    
+
     // הוספת ההקדמה לפני השאלות הראשונות
     let introductionHTML = '';
     if (index === 0 && CONFIG.quiz.introductionText) {
@@ -540,13 +691,13 @@ function showQuestion(index) {
             </div>
         `;
     }
-    
+
     container.innerHTML = `
         ${introductionHTML}
         <div class="question">
             <h3>${question.question}</h3>
-            ${question.type === 'אמריקאי' ? 
-                `<div class="options">
+            ${question.type === 'אמריקאי' ?
+        `<div class="options">
                     ${question.options.map((option, i) => `
                         <label class="option">
                             <input type="radio" name="q${index}" value="${option}" 
@@ -555,16 +706,16 @@ function showQuestion(index) {
                         </label>
                     `).join('')}
                 </div>` :
-                `<textarea class="open-answer" rows="4">${userAnswers[index] || ''}</textarea>`
+        `<textarea class="open-answer" rows="4">${userAnswers[index] || ''}</textarea>`
             }
         </div>
     `;
-    
+
     // עדכון כפתורי הניווט
     const prevButton = document.getElementById('prevQuestion');
     const nextButton = document.getElementById('nextQuestion');
     const submitButton = document.getElementById('submitQuiz');
-    
+
     // הסתרת הכפתורים
     if (index === 0) {
         prevButton.style.display = 'block';
@@ -575,15 +726,28 @@ function showQuestion(index) {
         prevButton.classList.remove('cancel-button');
         prevButton.innerHTML = `<span class="material-icons">arrow_forward</span>הקודמת`;
     }
-    
+
     if (index === currentQuestions.length - 1) {
         nextButton.style.display = 'none';
     } else {
         nextButton.style.display = 'block';
         nextButton.innerHTML = `הבאה<span class="material-icons">arrow_back</span>`;
     }
-    
+
     submitButton.classList.toggle('hidden', index !== currentQuestions.length - 1);
+
+    if (mode === 'initial' && container && !prefersQuizReducedMotion()) {
+        requestAnimationFrame(() => {
+            container.classList.add('question-surface--enter');
+            setTimeout(() => {
+                container.classList.remove('question-surface--enter');
+            }, 500);
+        });
+    }
+}
+
+function showQuestion(index) {
+    paintQuestion(index, { mode: 'instant' });
 }
 
 function saveCurrentAnswer() {
