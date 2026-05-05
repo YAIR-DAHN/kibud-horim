@@ -285,7 +285,7 @@ async function submitQuizToServer() {
                     <div class="success-container">
                         <span class="material-icons success-icon">check_circle</span>
                         <h1>אשריך!</h1>
-                        <p>התשובות נקלטו בהצלחה! <br>השעשועון הבא יהיה על עמודים 10 - 12 בחוברת וכן המעשיות בגמרא בדף לא: <br> הזוכים יפורסמו באתר במהלך שבוע הבא <br> בהצלחה מרובה!</p>
+                        <p>התשובות נקלטו בהצלחה! <br>החידון הבא יהיה על עמודים13-15  <br> הזוכים יפורסמו באתר במהלך שבוע הבא <br> בהצלחה מרובה!</p>
                         <button onclick="window.location.href='index.html'">חזרה לדף הבית</button>
                     </div>
                 </div>
